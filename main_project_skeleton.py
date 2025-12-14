@@ -50,8 +50,17 @@ def  mean_logloss(X, y_real, theta):
 
 
 def log_regr(X, theta):
-    # Implement ...
-    y_pred = 999  # placeholder
+    """
+    Logistic Regression prediction function.
+    X: Matrix of dimensions: number_of_samples x (number_of_features+1)
+    theta: Model parameters, vector of dimensions: (number_of_features+1) x 1
+    Returns: Predicted probabilities ȳ ∈ [0,1], vector of dimensions: number_of_samples
+    """
+    # Compute ȳ = σ(X̂θ) = 1 / (1 + e^(-X̂θ))
+    # This is Eq. 1b and Eq. 2 from the PDF
+    z = X @ theta  # Matrix multiplication: X̂θ
+    y_pred = 1 / (1 + np.exp(-z))  # Sigmoid function
+
     return y_pred
 
 
