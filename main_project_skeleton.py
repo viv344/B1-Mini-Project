@@ -12,14 +12,32 @@ def grad_descent(X_train, y_train, learning_rate, iters_total):
     # X_train: Matrix of dimensions: number_of_samples x (number_of_features+1)
     # y_train: Vector of dimensions: number_of_samples
     # Returns: Optimized theta, vector of dimensions: (number_of_features+1)
-    
+
     # Initialize Theta
-    theta_init = np.zeros(shape=(X_train.shape[1], 1))
-    
-    # Train Theta:
-    # ... Implement ...
-    theta_opt = 999  # Replace. Placeholder for the skeleton code to run
-    
+    theta = np.zeros(shape=(X_train.shape[1], 1))
+
+    # Reshape y_train to column vector if needed
+    y_train = y_train.reshape(-1, 1)
+
+    # Number of samples
+    n = X_train.shape[0]
+
+    # Train Theta with Gradient Descent
+    for iteration in range(iters_total):
+        # Compute predictions: y_pred = σ(X̂θ)
+        # σ(z) = 1 / (1 + e^(-z))
+        z = X_train @ theta  # Matrix multiplication: X̂θ
+        y_pred = 1 / (1 + np.exp(-z))  # Sigmoid function
+
+        # Compute gradient: ∇θL_C(θ, x̂, y) = (1/n) * X̂^T * (ȳ - y)
+        # From Eq. 7 in PDF: ∇θL_C(θ, x̂, y) = (ȳ - y)x̂
+        gradient = (1/n) * (X_train.T @ (y_pred - y_train))
+
+        # Update parameters: θ = θ - λ * ∇θJ
+        theta = theta - learning_rate * gradient
+
+    theta_opt = theta
+
     return theta_opt
 
 
