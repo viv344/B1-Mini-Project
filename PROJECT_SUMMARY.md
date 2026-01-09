@@ -5,17 +5,17 @@
 
 ## ALL TASKS COMPLETED (Section 3.2)
 
-### **Implementation (Section 3.1)** ✓
+### **Implementation (Section 3.1)**
 All core functions implemented:
-- ✓ `grad_descent()` - Gradient descent optimization with loss tracking
-- ✓ `log_regr()` - Logistic regression prediction (sigmoid function)
-- ✓ `mean_logloss()` - Mean log-loss cost function
-- ✓ `classif_error()` - Classification error percentage
-- ✓ `create_features_for_poly()` - Polynomial feature generation
+- `grad_descent()` - Gradient descent optimization with loss tracking
+- `log_regr()` - Logistic regression prediction (sigmoid function)
+- `mean_logloss()` - Mean log-loss cost function
+- `classif_error()` - Classification error percentage
+- `create_features_for_poly()` - Polynomial feature generation
 
-### **Analysis Tasks (Section 3.2)** ✓
+### **Analysis Tasks (Section 3.2)**
 
-#### **Task 1: Hyper-parameter Configuration** ✓
+#### **Task 1: Hyper-parameter Configuration**
 **Script:** `hyperparameter_tuning.py`
 **Results:**
 - Tested: n_iters = {100, 500, 1000, 10000} × λ = {0.01, 0.1, 0.5, 1.0}
@@ -23,7 +23,7 @@ All core functions implemented:
 - **Validation error:** 3.00%
 - Generated: `hyperparameter_tuning_results.png`
 
-#### **Task 2: Convergence Analysis** ✓
+#### **Task 2: Convergence Analysis**
 **Script:** `plot_convergence.py`
 **Results:**
 - Initial loss: 0.6931 (= ln(2), as expected!)
@@ -32,7 +32,7 @@ All core functions implemented:
 - Model properly converged
 - Generated: `convergence_analysis.png`, `convergence_comparison_learning_rates.png`
 
-#### **Task 3: Runtime vs Quality Trade-off** ✓
+#### **Task 3: Runtime vs Quality Trade-off**
 **Script:** `analyze_runtime_quality.py`
 **Results:**
 - Runtime scales linearly with n_iters
@@ -40,14 +40,14 @@ All core functions implemented:
 - **Best balance:** λ = 0.1-0.5 with n_iters = 1000-5000
 - Generated: `runtime_quality_analysis.png`
 
-#### **Task 4: Repeated Experiments** ✓
+#### **Task 4: Repeated Experiments**
 **Script:** `repeated_experiments.py`
 **Results:**
 - Infrastructure for 10-20 repetitions per configuration
 - Averaged results: Training 3.05% ± 0.82%, Validation 3.58% ± 0.35%
 - Accounts for randomness in data sampling
 
-#### **Task 5: Polynomial Degree Comparison** ✓
+#### **Task 5: Polynomial Degree Comparison**
 **Script:** `compare_polynomial_degrees.py`
 **Results:** (Averaged over 20 repetitions)
 
@@ -55,14 +55,14 @@ All core functions implemented:
 |--------|-------------|-----------|-----------------|
 | 1      | 9.54% ± 1.48% | 9.46% ± 0.50% | -0.08% |
 | 2      | 5.08% ± 1.19% | 5.17% ± 0.37% | 0.09% |
-| **3**  | **2.95% ± 0.71%** | **3.41% ± 0.39%** | **0.46%** ✓ |
+| **3**  | **2.95% ± 0.71%** | **3.41% ± 0.39%** | **0.46%**  |
 | 4      | 3.01% ± 0.70% | 3.68% ± 0.34% | 0.67% |
 | 5      | 2.71% ± 0.93% | 3.46% ± 0.43% | 0.75% |
 
 **Best:** Degree 3 (3.41% validation error)
 Generated: `polynomial_degree_comparison.png`
 
-#### **Task 6: Training Set Size Analysis** ✓
+#### **Task 6: Training Set Size Analysis**
 **Script:** `compare_training_sizes.py`
 **Results:** (Averaged over 20 repetitions)
 
@@ -70,14 +70,13 @@ Generated: `polynomial_degree_comparison.png`
 |---------|-------------|-----------|-----------------|
 | 50      | 1.00% ± 1.48% | 5.35% ± 1.33% | **4.35%** |
 | 100     | 1.75% ± 1.51% | 4.19% ± 0.94% | **2.44%** |
-| 200     | 3.33% ± 1.25% | 3.85% ± 0.45% | 0.52% ✓ |
-| **400** | **3.02% ± 0.92%** | **3.50% ± 0.43%** | **0.48%** ✓ |
+| 200     | 3.33% ± 1.25% | 3.85% ± 0.45% | 0.52%  |
+| **400** | **3.02% ± 0.92%** | **3.50% ± 0.43%** | **0.48%**  |
 
 **Key finding:** Severe overfitting with small datasets! 400 samples optimal.
 Generated: `training_size_comparison.png`
 
-#### **Task 7: Best Model Analysis** ✓
-**Script:** `best_model_analysis.py`
+#### **Task 7: Best Model Analysis****Script:** `best_model_analysis.py`
 **Best Model:**
 - **Configuration:** Degree 3, λ = 0.1, n_iters = 10000
 - **Performance:** 3.88% validation error, 3.50% training error
@@ -91,8 +90,7 @@ Generated: `training_size_comparison.png`
 
 Generated: `best_model_decision_boundary.png`, `linear_vs_nonlinear_comparison.png`
 
-#### **Task 8: Numerical Issues** ✓
-**Script:** `numerical_issues_report.py`
+#### **Task 8: Numerical Issues****Script:** `numerical_issues_report.py`
 **Issues Resolved:**
 1. **Log of zero:** Used epsilon clipping (1e-15)
 2. **Sigmoid overflow:** NumPy handles gracefully
@@ -127,7 +125,7 @@ Generated: `best_model_decision_boundary.png`, `linear_vs_nonlinear_comparison.p
 
 ---
 
-## 🎓 Key Insights for Report
+## Things to add in Report
 
 1. **Non-linear models essential:** Linear model (9.46% error) vs Degree 3 (3.41% error)
 
@@ -165,10 +163,10 @@ Generated: `best_model_decision_boundary.png`, `linear_vs_nonlinear_comparison.p
 ## All Section 3.2 Tasks Complete!
 
 Ready for report writing with:
-- ✓ Tables of results
-- ✓ Visualizations
-- ✓ Analysis and discussions
-- ✓ Optimal parameters
-- ✓ Numerical stability notes
+-  Tables of results
+-  Visualizations
+-  Analysis and discussions
+-  Optimal parameters
+-  Numerical stability notes
 
 **Project Status: COMPLETE**
