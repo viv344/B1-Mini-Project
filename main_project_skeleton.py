@@ -8,10 +8,12 @@ import numpy as np
 import matplotlib.pyplot as plt  # For plotting
 
 
-def grad_descent(X_train, y_train, learning_rate, iters_total):
+def grad_descent(X_train, y_train, learning_rate, iters_total, track_loss=False):
     # X_train: Matrix of dimensions: number_of_samples x (number_of_features+1)
     # y_train: Vector of dimensions: number_of_samples
+    # track_loss: If True, returns loss history for plotting convergence
     # Returns: Optimized theta, vector of dimensions: (number_of_features+1)
+    #          If track_loss=True, also returns list of losses at each iteration
 
     # Initialize Theta
     theta = np.zeros(shape=(X_train.shape[1], 1))
@@ -22,12 +24,23 @@ def grad_descent(X_train, y_train, learning_rate, iters_total):
     # Number of samples
     n = X_train.shape[0]
 
+    # Track loss history if requested
+    loss_history = [] if track_loss else None
+
     # Train Theta with Gradient Descent
     for iteration in range(iters_total):
         # Compute predictions: y_pred = σ(X̂θ)
         # σ(z) = 1 / (1 + e^(-z))
         z = X_train @ theta  # Matrix multiplication: X̂θ
         y_pred = 1 / (1 + np.exp(-z))  # Sigmoid function
+
+        # Track loss if requested
+        if track_loss:
+            epsilon = 1e-15
+            y_pred_clipped = np.clip(y_pred, epsilon, 1 - epsilon)
+            loss = -y_train * np.log(y_pred_clipped) - (1 - y_train) * np.log(1 - y_pred_clipped)
+            mean_loss = np.mean(loss)
+            loss_history.append(mean_loss)
 
         # Compute gradient: ∇θL_C(θ, x̂, y) = (1/n) * X̂^T * (ȳ - y)
         # From Eq. 7 in PDF: ∇θL_C(θ, x̂, y) = (ȳ - y)x̂
@@ -38,7 +51,10 @@ def grad_descent(X_train, y_train, learning_rate, iters_total):
 
     theta_opt = theta
 
-    return theta_opt
+    if track_loss:
+        return theta_opt, loss_history
+    else:
+        return theta_opt
 
 
 def  mean_logloss(X, y_real, theta):
