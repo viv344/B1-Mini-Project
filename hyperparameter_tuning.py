@@ -14,7 +14,7 @@ learning_rates = [0.01, 0.1, 0.5, 1.0]
 
 # Use polynomial degree 3 for finding best hyper-parameters (as recommended in PDF)
 degree_poly = 3
-
+#degree can be changed to 2, 4, or 5 for further experiments
 print("="*70)
 print("HYPER-PARAMETER TUNING EXPERIMENT")
 print("="*70)

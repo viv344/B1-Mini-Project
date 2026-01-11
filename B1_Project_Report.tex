@@ -1,0 +1,169 @@
+\documentclass[11pt,a4paper]{article}
+\usepackage[margin=2cm]{geometry}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{amsmath}
+\usepackage{subcaption}
+\usepackage{float}
+\usepackage{hyperref}
+
+\title{\textbf{B1 Engineering Computation - Project} \\
+       Optimization for Classification Models}
+\author{Your Name \\ Your College}
+\date{Michaelmas Term, 2025}
+
+\begin{document}
+
+\maketitle
+
+\section{Introduction}
+
+This project investigates logistic regression for binary classification using synthetic 2D data generated from multi-modal Gaussian distributions. The task involves implementing gradient descent optimization, exploring linear and non-linear models via polynomial features, and analyzing hyperparameter tuning, convergence, and overfitting behavior.
+
+All core functions were implemented: gradient descent (\texttt{grad\_descent}), logistic regression prediction (\texttt{log\_regr}), mean log-loss calculation (\texttt{mean\_logloss}), classification error (\texttt{classif\_error}), and polynomial feature generation (\texttt{create\_features\_for\_poly}). The following sections present experimental results and analysis.
+
+\section{Hyperparameter Configuration}
+
+\subsection{Methodology}
+To find optimal hyperparameters, I tested combinations of learning rate $\lambda \in \{0.01, 0.1, 0.5, 1.0\}$ and iterations $n_{\text{iters}} \in \{100, 500, 1000, 10000\}$ using a polynomial degree 3 model with 400 training and 4000 validation samples.
+
+\subsection{Results}
+Table~\ref{tab:hyperparam} shows validation errors for different configurations. The best performance was achieved with $\lambda = 0.1$ and $n_{\text{iters}} = 10000$, yielding 3.00\% validation error.
+
+\begin{table}[h]
+  \centering
+  \caption{Validation Error (\%) for Different Hyperparameter Combinations}
+  \label{tab:hyperparam}
+  \begin{tabular}{lcccc}
+    \toprule
+    $\lambda$ & $n=100$ & $n=500$ & $n=1000$ & $n=10000$ \\
+    \midrule
+    0.01 & 7.95 & 5.78 & 5.25 & 3.85 \\
+    \textbf{0.10} & 5.27 & 4.35 & 3.85 & \textbf{3.00} \\
+    0.50 & 4.40 & 3.52 & 3.28 & 3.08 \\
+    1.00 & 3.88 & 3.25 & 3.08 & 3.05 \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+Figure~\ref{fig:hyperparam} visualizes how validation error decreases with more iterations for different learning rates. Smaller $\lambda$ converges slowly but steadily, while larger $\lambda$ achieves faster initial reduction but may overshoot. $\lambda = 0.1$ provides the best balance.
+
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=0.75\textwidth]{hyperparameter_tuning_results.png}
+  \caption{Validation error vs iterations for different learning rates}
+  \label{fig:hyperparam}
+\end{figure}
+
+\section{Convergence Analysis}
+
+\subsection{Loss vs Iterations}
+Figure~\ref{fig:convergence} shows the training loss over 10,000 iterations for the best configuration. The initial loss was 0.6931, which equals $\ln(2)$ as expected for binary classification with zero-initialized parameters. The final loss of 0.0977 represents an 85.91\% reduction, confirming proper convergence. The loss stabilized after approximately 5,000 iterations, indicating that the model reached a local minimum.
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.95\textwidth]{convergence_analysis.png}
+  \caption{Training loss convergence showing initial rapid decrease followed by stabilization. Top-left: linear scale, top-right: log scale, bottom: zoomed views of first and last 1000 iterations.}
+  \label{fig:convergence}
+\end{figure}
+
+\subsection{Learning Rate and Iteration Trade-off}
+The relationship between $\lambda$ and $n_{\text{iters}}$ is inverse for achieving similar quality: larger learning rates require fewer iterations but risk instability, while smaller rates are more stable but slower. Runtime scales linearly with $n_{\text{iters}}$ since each iteration has constant computational cost, while $\lambda$ does not affect runtime per iteration.
+
+For real-world applications, I would prefer moderate settings ($\lambda = 0.1\text{--}0.5$ with $n_{\text{iters}} = 1000\text{--}5000$) as they balance convergence quality, computational speed, and stability better than aggressive or conservative extremes.
+
+\section{Model Complexity Analysis}
+
+\subsection{Polynomial Degree Comparison}
+To investigate the bias-variance tradeoff, I trained models with polynomial degrees 1--5 using the optimal hyperparameters. Each experiment was repeated 20 times with different random data samples to account for variability.
+
+\begin{table}[h]
+  \centering
+  \caption{Performance vs Polynomial Degree (Averaged over 20 Repetitions)}
+  \label{tab:degrees}
+  \begin{tabular}{cccc}
+    \toprule
+    Degree & Train Error (\%) & Val Error (\%) & Overfitting Gap (\%) \\
+    \midrule
+    1 & $9.54 \pm 1.48$ & $9.46 \pm 0.50$ & $-0.08$ \\
+    2 & $5.08 \pm 1.19$ & $5.17 \pm 0.37$ & $0.09$ \\
+    \textbf{3} & $\mathbf{2.95 \pm 0.71}$ & $\mathbf{3.41 \pm 0.39}$ & $\mathbf{0.46}$ \\
+    4 & $3.01 \pm 0.70$ & $3.68 \pm 0.34$ & $0.67$ \\
+    5 & $2.71 \pm 0.93$ & $3.46 \pm 0.43$ & $0.75$ \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+Table~\ref{tab:degrees} shows that degree 1 (linear model) severely underfits with 9.46\% validation error, as it cannot capture the non-linear decision boundary of the multi-modal data. Degree 3 achieves the best validation performance (3.41\%), while degrees 4--5 show minimal improvement and slightly larger overfitting gaps. This demonstrates the classic bias-variance tradeoff: too simple models (degree 1) have high bias, while excessively complex models (degrees 4--5) exhibit higher variance without corresponding performance gains. Degree 3 represents the optimal complexity for this dataset.
+
+\subsection{Training Set Size Impact}
+I investigated how training data quantity affects model performance and overfitting by training the degree 3 model with varying sample sizes.
+
+\begin{table}[h]
+  \centering
+  \caption{Performance vs Training Set Size (Averaged over 20 Repetitions)}
+  \label{tab:training_size}
+  \begin{tabular}{cccc}
+    \toprule
+    Samples & Train Error (\%) & Val Error (\%) & Overfitting Gap (\%) \\
+    \midrule
+    50  & $1.00 \pm 1.48$ & $5.35 \pm 1.33$ & \textbf{4.35} \\
+    100 & $1.75 \pm 1.51$ & $4.19 \pm 0.94$ & 2.44 \\
+    200 & $3.33 \pm 1.25$ & $3.85 \pm 0.45$ & 0.52 \\
+    \textbf{400} & $\mathbf{3.02 \pm 0.92}$ & $\mathbf{3.50 \pm 0.43}$ & \textbf{0.48} \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+Table~\ref{tab:training_size} reveals severe overfitting with small datasets. With only 50 samples, the model achieves very low training error (1.00\%) but poor validation error (5.35\%), indicating it has memorized the limited training data rather than learning generalizable patterns. The 4.35\% overfitting gap confirms this. As training size increases to 400 samples, training error increases to 3.02\% (the model can no longer fit all training points perfectly), but crucially, validation error decreases to 3.50\%, demonstrating true learning and generalization. The overfitting gap shrinks to a minimal 0.48\%.
+
+This counterintuitive result—higher training error with more data—is expected and desirable: it means the model is learning robust patterns rather than memorizing noise.
+
+\section{Best Model Analysis}
+
+\subsection{Optimal Configuration}
+Based on all experiments, the best model uses:
+\begin{itemize}
+    \item Polynomial degree: 3
+    \item Learning rate: $\lambda = 0.1$
+    \item Iterations: $n_{\text{iters}} = 10000$
+    \item Training samples: 400
+\end{itemize}
+
+This configuration achieved 3.41\% validation error (averaged), representing a 64\% improvement over the linear baseline (9.46\%). The learned optimal parameters are:
+$$\boldsymbol{\theta} = [0.789, 1.115, -0.514, 3.837, 0.815, -2.978, 1.075, 2.553, -0.817, -3.431]^T$$
+
+\subsection{Decision Boundary Visualization}
+Figure~\ref{fig:decision_boundary} compares linear and non-linear decision boundaries. The linear model struggles to separate the multi-modal data, while the degree 3 polynomial successfully captures the complex non-linear boundary required to distinguish the two classes.
+
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=0.9\textwidth]{linear_vs_nonlinear_comparison.png}
+  \caption{Comparison of linear (left) vs non-linear degree 3 (right) decision boundaries. The non-linear model adapts to the data structure, achieving superior classification performance.}
+  \label{fig:decision_boundary}
+\end{figure}
+
+\subsection{Was This Expected?}
+Yes, this result was entirely expected. The synthetic data is generated from multi-modal Gaussian distributions (2 Gaussians for class 1, 3 for class 2), inherently requiring a non-linear decision boundary. A linear model cannot capture this complexity, resulting in high bias (underfitting). The degree 3 polynomial provides sufficient flexibility to model the curved boundary while having enough training data (400 samples for 10 parameters) to prevent overfitting. This demonstrates optimal model selection balancing complexity and data availability.
+
+\section{Numerical Stability}
+
+During implementation, several numerical issues were addressed:
+
+\textbf{Logarithm of zero:} The log-loss function $\mathcal{L} = -y\log(\bar{y}) - (1-y)\log(1-\bar{y})$ encounters $\log(0)$ when predictions $\bar{y}$ equal 0 or 1. This was resolved using epsilon clipping: \texttt{y\_pred = np.clip(y\_pred, 1e-15, 1-1e-15)}, ensuring all inputs to logarithms remain valid.
+
+\textbf{Sigmoid overflow:} For extreme input values, $\sigma(z) = 1/(1+e^{-z})$ can overflow. NumPy's \texttt{exp()} function handles this gracefully through built-in overflow protection.
+
+\textbf{Gradient precision:} Explicit division by $n$ in gradient computation and use of optimized NumPy matrix operations (BLAS/LAPACK) ensured numerical stability throughout training.
+
+\textbf{Dimension compatibility:} Explicit reshaping to column vectors prevented matrix dimension mismatches: \texttt{y\_train.reshape(-1, 1)}.
+
+All solutions follow standard numerical computing best practices, achieving stable convergence across all experiments with no NaN or infinite values.
+
+\section{Conclusion}
+
+This project successfully implemented logistic regression with gradient descent for binary classification. Through systematic hyperparameter tuning, I identified optimal settings ($\lambda=0.1$, $n_{\text{iters}}=10000$) achieving 3.00\% validation error. Analysis of polynomial degrees demonstrated the bias-variance tradeoff, with degree 3 balancing model complexity and generalization (3.41\% error). Investigation of training set sizes revealed severe overfitting with limited data (50 samples: 4.35\% gap) and robust performance with sufficient data (400 samples: 0.48\% gap).
+
+The final model achieves excellent performance, correctly learning non-linear decision boundaries from multi-modal data. All results aligned with theoretical expectations, validating the implementation and demonstrating key machine learning principles: the importance of model complexity selection, sufficient training data, and proper hyperparameter tuning.
+
+\end{document}
